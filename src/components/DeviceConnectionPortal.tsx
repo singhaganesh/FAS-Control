@@ -16,6 +16,8 @@ interface DeviceConnectionPortalProps {
     isRetrying: boolean;
     handleConnect: () => void;
     startScan: () => void;
+    protocol: 'http' | 'https';
+    setProtocol: (val: 'http' | 'https') => void;
 }
 
 const DeviceConnectionPortal: React.FC<DeviceConnectionPortalProps> = ({
@@ -24,6 +26,8 @@ const DeviceConnectionPortal: React.FC<DeviceConnectionPortalProps> = ({
     isRetrying,
     handleConnect,
     startScan,
+    protocol,
+    setProtocol,
 }) => {
     const [showManual, setShowManual] = useState(false);
 
@@ -87,6 +91,26 @@ const DeviceConnectionPortal: React.FC<DeviceConnectionPortalProps> = ({
 
                     <div className={`overflow-hidden transition-all duration-300 ${showManual ? 'max-h-[400px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
                         <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-5 shadow-sm">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-[#252F3D] uppercase tracking-wider">Connection Protocol</label>
+                                <div className="flex rounded-md bg-slate-100 p-0.5">
+                                    <button
+                                        type="button"
+                                        onClick={() => setProtocol('http')}
+                                        className={`flex-1 py-1.5 text-xs font-bold rounded transition-all ${protocol === 'http' ? 'bg-white text-[#252F3D] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        HTTP (Unsecured)
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setProtocol('https')}
+                                        className={`flex-1 py-1.5 text-xs font-bold rounded transition-all ${protocol === 'https' ? 'bg-[#52B5A2] text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        HTTPS (Secured)
+                                    </button>
+                                </div>
+                            </div>
+
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-[#252F3D] uppercase tracking-wider">IP Address</label>
                                 <input

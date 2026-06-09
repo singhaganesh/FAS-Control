@@ -14,6 +14,7 @@ const HestiaControlPanel = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [ipAddress, setIpAddress] = useState('192.168.4.74');
   const [port, setPort] = useState('8085');
+  const [protocol, setProtocol] = useState<'http' | 'https'>('http');
   const [isRetrying, setIsRetrying] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isPanelLoading, setIsPanelLoading] = useState(false);
@@ -93,6 +94,7 @@ const HestiaControlPanel = () => {
       const scannedProtocol = url.protocol.replace(':', '');
       setIpAddress(scannedIp);
       setPort(scannedPort);
+      setProtocol(scannedProtocol === 'https' ? 'https' : 'http');
       setTimeout(() => {
         stopScan();
         connectToDevice(scannedIp, scannedPort, scannedProtocol);
@@ -139,7 +141,7 @@ const HestiaControlPanel = () => {
     setIsRetrying(true);
     setTimeout(() => {
       let manualIp = ipAddress.trim();
-      let manualProtocol = 'http';
+      let manualProtocol = protocol;
       if (manualIp.startsWith('https://')) {
         manualProtocol = 'https';
         manualIp = manualIp.replace('https://', '');
@@ -237,6 +239,8 @@ const HestiaControlPanel = () => {
                     isRetrying={isRetrying}
                     handleConnect={handleConnect}
                     startScan={startScan}
+                    protocol={protocol}
+                    setProtocol={setProtocol}
                 />
             ) : (
                 <div className="flex-1 flex items-center justify-center p-12">
