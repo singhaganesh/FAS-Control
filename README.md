@@ -1,4 +1,4 @@
-# FAS control
+# SEPLE Connect
 
 Hestia App is a Capacitor-based Android application designed to connect and control Hestia devices via ESP32 web servers.
 

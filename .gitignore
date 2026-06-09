@@ -36,3 +36,5 @@ npm-debug.log*
 
 # Debug
 npm-debug.log*
+# Added by code-review-graph
+.code-review-graph/
