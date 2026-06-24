@@ -7,6 +7,9 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
+import android.webkit.WebChromeClient;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceError;
 import android.webkit.JavascriptInterface;
@@ -17,6 +20,10 @@ import android.view.WindowManager;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.widget.FrameLayout;
+import android.widget.EditText;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.text.InputType;
 import androidx.core.view.WindowCompat;
 import com.getcapacitor.BridgeActivity;
 import java.net.URLEncoder;
@@ -77,6 +84,96 @@ public class MainActivity extends BridgeActivity {
                 s.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36");
 
                 CookieManager.getInstance().setAcceptThirdPartyCookies(panelWebView, true);
+
+                panelWebView.setWebChromeClient(new WebChromeClient() {
+                    @Override
+                    public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Input Required");
+                        builder.setMessage(message);
+                        
+                        final EditText input = new EditText(MainActivity.this);
+                        if (message != null && message.toLowerCase().contains("password")) {
+                            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        } else {
+                            input.setInputType(InputType.TYPE_CLASS_TEXT);
+                        }
+                        
+                        if (defaultValue != null) {
+                            input.setText(defaultValue);
+                        }
+                        builder.setView(input);
+                        
+                        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm(input.getText().toString());
+                            }
+                        });
+                        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.cancel();
+                            }
+                        });
+                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                result.cancel();
+                            }
+                        });
+                        builder.show();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Confirm");
+                        builder.setMessage(message);
+                        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm();
+                            }
+                        });
+                        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.cancel();
+                            }
+                        });
+                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                result.cancel();
+                            }
+                        });
+                        builder.show();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Alert");
+                        builder.setMessage(message);
+                        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm();
+                            }
+                        });
+                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                result.confirm();
+                            }
+                        });
+                        builder.show();
+                        return true;
+                    }
+                });
 
                 panelWebView.setWebViewClient(new WebViewClient() {
                     @Override
